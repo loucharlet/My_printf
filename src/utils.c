@@ -72,72 +72,54 @@ int my_putnbr_base(unsigned long nbr, char const *base)
     return (len);
 }
 
-
-
 //variadic argement handlers
 
-int my_putchar_va(va_list *list, int width)
+int my_putchar_va(va_list *list, format_t *spec)
 {
-    return (my_putchar_width_va(list, width));
-}
+    char c = (char)va_arg(*list, int);
+    int count = 0;
 
-int my_putstr_va(va_list *list, int width)
-{
-    return (my_putstr_width_va(list, width));
-}
-
-int my_put_nbr_va(va_list *list, int width) 
-{
-    return (my_put_nbr_width_va(list, width));
-}
-
-int my_puthex_va(va_list *list, int width)
-{
-    unsigned int n = va_arg(*list, unsigned int);
-    (void)width;
-    return (my_putnbr_base(n, "0123456789abcdef"));
-}
-
-int my_puthex_upper_va(va_list *list, int width)
-{
-    unsigned int n = va_arg(*list, unsigned int);
-    (void)width;
-    return (my_putnbr_base(n, "0123456789ABCDEF"));
-}
-
-int my_putoctal_va(va_list *list, int width)
-{
-    unsigned int n = va_arg(*list, unsigned int);
-    (void)width;
-    return (my_putnbr_base(n, "01234567"));
-}
-
-int my_putbinary_va(va_list *list, int width)
-{
-    unsigned int n = va_arg(*list, unsigned int);
-    (void)width;
-    return (my_putnbr_base(n, "01"));
-}
-
-int my_putpointer_va(va_list *list, int width)
-{
-    void *ptr = va_arg(*list, void *);
-    unsigned long addr = (unsigned long)ptr;
-    (void)width;
-    if (ptr == NULL) return (my_putstr("(nil)")); 
-    int count = my_putstr("0x");
-    count += my_putnbr_base(addr, "0123456789abcdef");
+    if (!spec->left_align) {
+        while (count < (spec->width - 1)) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
+    count += my_putchar(c);
+    if (spec->left_align) {
+        while (count < spec->width) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
     return (count);
 }
 
-int my_putunsigned_va(va_list *list, int width)
+int my_putstr_va(va_list *list, format_t *spec)
 {
-    unsigned int n = va_arg(*list, unsigned int);
-    (void)width;
-    return (my_putnbr_base(n, "0123456789"));
+    char *str = va_arg(*list, char *);
+    int count = 0;
+    int str_len = 0;
+
+    if (!str) str = "(null)";
+    while (str[str_len]) str_len++;
+    if (!spec->left_align) {
+        while (count < (spec->width - str_len)) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
+    count += my_putstr(str);
+    if (spec->left_align) {
+        while (count < spec->width) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
+    return (count);
 }
 
-int my_put_nbr_width_va(va_list *list, int width)
+int my_put_nbr_va(va_list *list, format_t *spec) 
 {
     int value = va_arg(*list, int);
     char *str = my_itoa(value);
@@ -146,40 +128,103 @@ int my_put_nbr_width_va(va_list *list, int width)
 
     if (!str) return (0);
     while (str[str_len]) str_len++; 
-    while (count < (width - str_len)) {
-        write(1, " ", 1);
-        count++;
+    if (!spec->left_align) {
+        while (count < (spec->width - str_len)) {
+            write(1, &spec->pad_char, 1);
+            count++;
+        }
     }
     count += my_putstr(str);
+    if (spec->left_align) {
+        while (count < spec->width) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
     free(str);
     return (count);
 }
 
-int my_putstr_width_va(va_list *list, int width)
+int my_putbase_width_va(unsigned long n, char *base, format_t *spec)
 {
-    char *str = va_arg(*list, char *);
     int count = 0;
-    int str_len = 0;
+    int len = 0;
+    unsigned long tmp = n;
+    unsigned long base_len = 0;
 
-    if (!str) str = "(null)";
-    while (str[str_len]) str_len++;
-    while (count < (width - str_len)) {
-        write(1, " ", 1);
-        count++;
+    while (base[base_len]) base_len++;
+    if (tmp == 0) len = 1;
+    while (tmp > 0) {
+        tmp /= base_len;
+        len++;
     }
-    count += my_putstr(str);
+    if (!spec->left_align) {
+        while (count < (spec->width - len)) {
+            write(1, &spec->pad_char, 1);
+            count++;
+        }
+    }
+    count += my_putnbr_base(n, base);
+    if (spec->left_align) {
+        while (count < spec->width) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
     return (count);
 }
 
-int my_putchar_width_va(va_list *list, int width)
+int my_puthex_va(va_list *list, format_t *spec)
 {
-    char c = (char)va_arg(*list, int);
+    return (my_putbase_width_va(va_arg(*list, unsigned int), "0123456789abcdef", spec));
+}
+
+int my_puthex_upper_va(va_list *list, format_t *spec)
+{
+    return (my_putbase_width_va(va_arg(*list, unsigned int), "0123456789ABCDEF", spec));
+}
+
+int my_putoctal_va(va_list *list, format_t *spec)
+{
+    return (my_putbase_width_va(va_arg(*list, unsigned int), "01234567", spec));
+}
+
+int my_putbinary_va(va_list *list, format_t *spec)
+{
+    return (my_putbase_width_va(va_arg(*list, unsigned int), "01", spec));
+}
+
+int my_putpointer_va(va_list *list, format_t *spec)
+{
+    void *ptr = va_arg(*list, void *);
+    unsigned long addr = (unsigned long)ptr;
+    int len = 2; //gestion pointeur "0x"
+    unsigned long tmp = addr;
     int count = 0;
 
-    while (count < (width - 1)) {
-        write(1, " ", 1);
-        count++;
+    if (!ptr) return (my_putstr("(nil)"));
+    while (tmp > 0) {
+        tmp /= 16;
+        len++;
     }
-    count += my_putchar(c);
+    if (!spec->left_align) {
+        while (count < (spec->width - len)) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
+    count += my_putstr("0x");
+    count += my_putnbr_base(addr, "0123456789abcdef");
+    if (spec->left_align) {
+        while (count < spec->width) {
+            write(1, " ", 1);
+            count++;
+        }
+    }
     return (count);
+}
+
+int my_putunsigned_va(va_list *list, format_t *spec)
+{
+    return (my_putbase_width_va(va_arg(*list, unsigned int), "0123456789", spec));
 }

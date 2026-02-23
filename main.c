@@ -34,37 +34,39 @@ int main(void)
 
     my_printf(PINK "⊹₊˚‧︵‿₊୨ᰔ୧₊‿︵‧˚₊⊹\n" RESET);
     
-   // test width
+   //test width str
     my_printf("⋆.ೃ࿔ Nom (normal) : %s\n", "Zizou");
     my_printf("⋆.ೃ࿔ Nom (width)  : [%15s]\n", "Zizou");
 
-    // 2. TEST WIDTH SUR NOMBRES (Alignement à 10)
+    //test width nb int et double
     my_printf("⋆.ೃ࿔ Age (normal) : %d\n", age);
     my_printf("⋆.ೃ࿔ Age (width)  : [%10d]\n", age);
     my_printf("⋆.ೃ࿔ Temp(width)  : [%10i]\n", -5);
 
-    // 3. AUTRES FLAGS (Vérifie qu'ils sont dans ton TYPE_LIST !)
+    // autres flags
     my_printf("⋆.ೃ࿔ Unsigned     : %u\n", 4294967295U); 
     my_printf("⋆.ೃ࿔ Hexa Maj     : %X\n", 255); 
     my_printf("⋆.ೃ࿔ Pointeur     : %p\n", &age); 
     my_printf("⋆.ೃ࿔ Succès       : 100%% !\n");
+    my_printf("⋆.ೃ࿔ Gauche (-)   : [%-10d] <-\n", 42); 
+    my_printf("⋆.ೃ࿔ Zero (0)     : [%010x]\n", 255);
     
     my_printf(PINK "⊹₊˚‧︵‿₊୨ᰔ୧₊‿︵‧˚₊⊹\n\n" RESET);
 
-    // 4. TEST DE COMPTAGE (LEN)
+    // test comptage
     my_printf(PINK "--- COMPARISON TEST ---\n" RESET);
-    len_my = my_printf("Test: [%10s] and [%5d]", "Epitech", 42);
+    len_my = my_printf("test my_printf : [%10s] and [%5d]", "Epitech", 42);
     my_printf("\nMy return: %d\n", len_my);
     
-    // Comparaison avec le vrai printf pour être sûr
-    // (Affiche sur une nouvelle ligne pour ne pas casser ton visuel)
-    len_real = printf("Test: [%10s] and [%5d]", "Epitech", 42);
+    // comparaison printf 
+ 
+    len_real = printf("test og printf : [%10s] and [%5d]", "Epitech", 42);
     printf("\nReal return: %d\n", len_real);
 
     if (len_my == len_real)
-        my_printf(PINK "\n  ⋆.ೃ࿔ ݁ PERFECT MATCH ! ˖*༄\n" RESET);
+        my_printf(PINK "\n  ⋆.ೃ࿔ ݁ MATCH ! ˖*༄\n" RESET);
     else
-        my_printf("\n  ⚠️ Difference detected !\n");
+        my_printf("\n Difference!\n");
 
     return (0);
 }
