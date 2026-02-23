@@ -98,6 +98,6 @@ gcc votre_fichier.c -L. -lmy -I./include
 Un dossier `tests/` contient les fichiers de test pour vérifier la conformité des sorties.
 
 ```bash
-gcc tests/main_tests.c -L. -lmy -I./include -o unit_test
+gcc tests/main_test.c -L. -lmy -I./include -o unit_test
 ./unit_test
 ```
