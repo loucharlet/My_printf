@@ -1,0 +1,24 @@
+# --- Binaires et Librairies ---
+my_printf
+unit_test
+*.a
+*.so
+
+# --- Objets et fichiers temporaires ---
+*.o
+*.lib
+*.d
+src/*.o
+
+# --- Sauvegardes éditeurs ---
+*~
+*.swp
+*.swo
+\#*\#
+.DS_Store
+
+# --- Tests et Logs ---
+*.log
+vgcore.*
+unit_tests/
+tests/*.o
