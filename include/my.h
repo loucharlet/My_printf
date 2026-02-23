@@ -7,8 +7,13 @@
 // pointeur sur fonctions format+flag
 typedef struct format_s {
     int width;
-    int left_align; // flag '-'
-    char pad_char;  // ' ' ou '0'
+    int precision;   
+    int hash;      
+    int plus;
+    int space;  
+    int length;     
+    int left_align;  
+    char pad_char;   
 } format_t;
 
 typedef struct flags_s {

@@ -1,24 +1,14 @@
-# --- Binaires et Librairies ---
-my_printf
-unit_test
+# Binaires et Libs
 *.a
-*.so
-
-# --- Objets et fichiers temporaires ---
 *.o
-*.lib
-*.d
-src/*.o
+unit_test
+a.out
 
-# --- Sauvegardes éditeurs ---
-*~
-*.swp
-*.swo
-\#*\#
-.DS_Store
-
-# --- Tests et Logs ---
-*.log
+# Fichiers temporaires / Debug
 vgcore.*
-unit_tests/
-tests/*.o
+*.dSYM/
+.vscode/
+
+# Fichiers de couverture (si tu en fais)
+*.gcno
+*.gcda
